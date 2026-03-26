@@ -1,0 +1,196 @@
+# FuelWatch WA - Home Assistant Integration
+
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
+
+A Home Assistant custom integration for fetching fuel prices in Western Australia from [FuelWatch](https://www.fuelwatch.wa.gov.au/).
+
+## Features
+
+- 🔄 Automatic polling of FuelWatch RSS feeds
+- 📊 Statistical summaries (min, max, avg, price spread)
+- 🏪 Station count and cheapest station details
+- 🎯 Top 3 cheapest stations tracking
+- 📅 Today/tomorrow price forecasting
+- 🔢 Multiple fuel types per location
+
+## Supported Fuel Types
+
+The integration supports all official FuelWatch fuel types:
+
+- `ulp_91` - Unleaded Petrol (91 RON)
+- `premium_95` - Premium Unleaded (95 RON)
+- `diesel` - Diesel
+- `lpg` - LPG (Autogas)
+- `premium_98` - Premium Unleaded (98 RON)
+- `e85` - E85 Ethanol
+- `brand_diesel` - Brand Diesel
+
+## Installation
+
+### Manual Installation
+
+1. Download or clone this repository
+2. Copy the `custom_components/fuelwatchwa` folder to your Home Assistant `config/custom_components/` directory
+3. Restart Home Assistant
+4. Go to **Settings** → **Devices & Services** → **Add Integration**
+5. Search for "FuelWatch WA" and follow the setup wizard
+
+### HACS Installation (Coming Soon)
+
+Once published to HACS:
+
+1. Open HACS
+2. Go to Integrations
+3. Click the three dots in the top right
+4. Select "Custom repositories"
+5. Add `https://github.com/drosair/fuelwatchwa` as an integration
+6. Install "FuelWatch WA"
+
+## Configuration
+
+During setup, you'll be asked to provide:
+
+- **Location**: Suburb or location name (e.g., "Perth", "Fremantle")
+- **Fuel Types**: Comma-separated list of fuel types (e.g., `diesel,premium_98,ulp_91`)
+- **Day**: `today` or `tomorrow`
+
+The integration will create multiple sensors per fuel type.
+
+## Sensors Created
+
+For each configured fuel type, the following sensors are created:
+
+### Summary Statistics
+- `sensor.fuelwatch_{fuel_type}_min_price` - Lowest price in area
+- `sensor.fuelwatch_{fuel_type}_avg_price` - Average price
+- `sensor.fuelwatch_{fuel_type}_max_price` - Highest price
+- `sensor.fuelwatch_{fuel_type}_price_spread` - Difference between min and max
+- `sensor.fuelwatch_{fuel_type}_station_count` - Number of stations reporting
+
+### Cheapest Station
+- `sensor.fuelwatch_{fuel_type}_cheapest_price` - Cheapest price
+- `sensor.fuelwatch_{fuel_type}_cheapest_brand` - Brand name
+- `sensor.fuelwatch_{fuel_type}_cheapest_address` - Station address
+
+### Sensor Attributes
+
+All sensors include these attributes:
+- `location` - Configured location
+- `fuel_type` - Fuel type key
+- `day` - Today or tomorrow
+- `top_3` - List of 3 cheapest stations with brand, price, address, location
+- `fetched_at` - ISO timestamp of last fetch
+
+## Historical Data
+
+To track fuel price trends over time:
+
+### Using Home Assistant Recorder
+
+The default SQLite recorder will automatically track all sensor states. Configure retention in `configuration.yaml`:
+
+```yaml
+recorder:
+  purge_keep_days: 90
+  include:
+    entity_globs:
+      - sensor.fuelwatch_*
+```
+
+### Using InfluxDB
+
+For long-term analytics and Grafana dashboards:
+
+```yaml
+influxdb:
+  host: your-influxdb-host
+  port: 8086
+  database: homeassistant
+  include:
+    entity_globs:
+      - sensor.fuelwatch_*
+```
+
+## Example Usage
+
+See `examples/dashboards/fuelwatchwa-dashboard.yaml` for a complete dashboard example.
+
+## Current Status
+
+**Version**: 0.2.0-alpha1 (Phase 1 - Manual Testing)
+
+### ✅ Completed
+- Async-safe API client using executor jobs
+- Config flow with stable string parsing
+- Correct FuelWatch RSS product mappings
+- Multi-fuel-type coordinator architecture
+- Summary and cheapest sensors
+- Graceful handling of empty/missing data
+
+### 🧪 Testing Phase
+- Manual installation testing
+- Sensor state verification
+- Multi-location support
+- Update interval tuning (currently 30 minutes)
+
+### ⚠️ Known Limitations
+- Single location per integration instance (add multiple instances for multiple locations)
+- No region/grouped area support yet
+- No historical CSV import/backfill
+
+## Roadmap
+
+### Phase 2 - Polish & Testing
+- [ ] Additional dashboard examples
+- [ ] Unit tests for API and coordinator
+- [ ] Integration tests with mock FuelWatch data
+- [ ] Error handling improvements
+
+### Phase 3 - Enhanced Features
+- [ ] Historical CSV import/backfill utility
+- [ ] Grouped area support (e.g., "All Perth Metro")
+- [ ] Station-level sensors (optional)
+- [ ] Custom scan intervals per fuel type
+
+### Phase 4 - Advanced UX
+- [ ] CarPlay-friendly navigation integration
+- [ ] Nearest station routing
+- [ ] Price alert automations
+- [ ] HACS certification
+
+## Troubleshooting
+
+### Integration shows "Unavailable"
+- Check that the suburb/location name is recognized by FuelWatch
+- Verify fuel type names match exactly (case-sensitive)
+- Check Home Assistant logs for API errors
+
+### No data returned
+- Some locations may not have all fuel types available
+- Tomorrow's data may not be published until afternoon
+- FuelWatch API may be temporarily unavailable
+
+### Config flow returns 500 error
+- If you see this, ensure you're using the latest version
+- The old `cv_multi_select` helper has been removed
+
+## Contributing
+
+Contributions welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Test thoroughly in a live Home Assistant instance
+4. Submit a pull request
+
+## License
+
+MIT License - see LICENSE file for details
+
+## Credits
+
+- Built on the [fuelwatcher](https://github.com/danielssonn/fuelwatcher) Python library
+- Data sourced from [FuelWatch WA Government](https://www.fuelwatch.wa.gov.au/)
+
+## Disclaimer
+
+This is an unofficial integration. Not affiliated with or endorsed by FuelWatch or the Government of Western Australia.
