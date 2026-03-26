@@ -15,7 +15,8 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ):
-    coordinators = hass.data[DOMAIN][entry.entry_id]
+    data = hass.data[DOMAIN][entry.entry_id]
+    coordinators = data["coordinators"]
 
     entities = []
 
@@ -34,6 +35,10 @@ async def async_setup_entry(
         )
 
     async_add_entities(entities)
+    
+    # Set up analytics sensors
+    from .analytics_sensor import async_setup_analytics_sensors
+    await async_setup_analytics_sensors(hass, entry, async_add_entities, coordinators)
 
 
 class BaseFuelSensor(SensorEntity):
