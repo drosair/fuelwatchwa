@@ -1,0 +1,19 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "FuelWatch WA",
+        "description": "Configure your location and fuel types",
+        "data": {
+          "location": "Suburb or location",
+          "fuel_types": "Fuel types",
+          "day": "Day"
+        }
+      }
+    },
+    "error": {
+      "required": "This field is required",
+      "invalid_selection": "Invalid selection"
+    }
+  }
+}
