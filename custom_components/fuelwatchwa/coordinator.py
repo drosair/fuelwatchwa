@@ -21,7 +21,7 @@ class FuelWatchCoordinator(DataUpdateCoordinator):
             name=f"{DOMAIN}_{location}_{fuel_type}_{day}",
             update_interval=DEFAULT_SCAN_INTERVAL,
         )
-        self.api = FuelWatchAPI()
+        self.api = FuelWatchAPI(hass)
         self.location = location
         self.fuel_type = fuel_type
         self.day = day

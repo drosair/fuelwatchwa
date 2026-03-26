@@ -4,6 +4,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from statistics import mean
 
+from homeassistant.core import HomeAssistant
 from fuelwatcher import FuelWatch
 
 from .const import FUEL_TYPE_OPTIONS
@@ -12,19 +13,36 @@ from .const import FUEL_TYPE_OPTIONS
 class FuelWatchAPI:
     """Wrapper around fuelwatcher that returns normalized summary data."""
 
-    def __init__(self) -> None:
+    def __init__(self, hass: HomeAssistant) -> None:
+        self.hass = hass
         self.client = FuelWatch()
+
+    def _fetch_sync(self, location: str, fuel_type: str, day: str):
+        """Run the blocking FuelWatch request synchronously."""
+        product_id = FUEL_TYPE_OPTIONS[fuel_type]
+        self.client.query(suburb=location, product=product_id, day=day)
+        return self.client.get_xml
 
     async def fetch(self, location: str, fuel_type: str, day: str) -> dict | None:
         """Fetch FuelWatch data and return summary statistics."""
-        product_id = FUEL_TYPE_OPTIONS[fuel_type]
-        self.client.query(suburb=location, product=product_id, day=day)
-        data = self.client.get_xml
+        try:
+            data = await self.hass.async_add_executor_job(
+                self._fetch_sync, location, fuel_type, day
+            )
+        except Exception:
+            return None
 
         if not data:
             return None
 
-        prices = [float(row["price"]) for row in data if row.get("price")]
+        prices = []
+        for row in data:
+            try:
+                if row.get("price") is not None:
+                    prices.append(float(row["price"]))
+            except (TypeError, ValueError):
+                continue
+
         if not prices:
             return None
 
@@ -34,16 +52,28 @@ class FuelWatchAPI:
         price_spread = round(max_price - min_price, 2)
         cheapest = data[0]
 
-        top_3 = [
-            {
-                "brand": row.get("brand"),
-                "price": float(row.get("price")),
-                "address": row.get("address"),
-                "location": row.get("location"),
-            }
-            for row in data[:3]
-            if row.get("price")
-        ]
+        top_3 = []
+        for row in data[:3]:
+            try:
+                price = float(row.get("price")) if row.get("price") is not None else None
+            except (TypeError, ValueError):
+                price = None
+
+            top_3.append(
+                {
+                    "brand": row.get("brand"),
+                    "price": price,
+                    "address": row.get("address"),
+                    "location": row.get("location"),
+                }
+            )
+
+        try:
+            cheapest_price = (
+                float(cheapest.get("price")) if cheapest.get("price") is not None else None
+            )
+        except (TypeError, ValueError):
+            cheapest_price = None
 
         return {
             "location": location,
@@ -56,7 +86,7 @@ class FuelWatchAPI:
             "avg_price": avg_price,
             "price_spread": price_spread,
             "cheapest": {
-                "price": float(cheapest.get("price")),
+                "price": cheapest_price,
                 "brand": cheapest.get("brand"),
                 "address": cheapest.get("address"),
                 "location": cheapest.get("location"),
