@@ -70,10 +70,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Config flow changed - existing integrations need reconfiguration
 - 'day' field removed from config (migration required for existing setups)
 
+## [0.4.0] - 2026-03-26
+
+### Added - Phase 3 Analytics
+- **7-Day Average Price** sensor with rolling mean calculation
+- **30-Day Average Price** sensor for monthly trend tracking
+- **Price Trend** sensor (increasing/decreasing/stable indicator)
+- **Price Volatility** sensor with stability classification
+- **Weekly Change %** sensor for percentage price changes
+- Analytics module using Home Assistant statistics API
+- Hourly automatic analytics updates
+- All analytics sensors grouped under same device
+
+### Technical
+- New `analytics.py` module for statistical calculations
+- New `analytics_sensor.py` with 5 sensor classes
+- Uses HA Recorder's `statistics_during_period` API
+- Trend calculation via period halves comparison
+- Volatility measured as standard deviation
+
+### Requirements
+- Requires at least 2 days of historical Recorder data
+- Analytics sensors update every hour
+- Works with existing recorder configuration
+
 ## [Unreleased]
 
 ### Planned
-- Historical data analytics (Phase 3)
 - CSV import/backfill utility (Phase 4)
 - Location intelligence and GPS integration (Phase 5)
 - CarPlay/mobile experience (Phase 6)

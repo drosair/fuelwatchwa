@@ -62,7 +62,7 @@ The integration automatically fetches **both today's and tomorrow's prices** in 
 
 ## Sensors Created
 
-For each configured fuel type, the integration creates **8 sensors** grouped under a logical device.
+For each configured fuel type, the integration creates **13 sensors** (8 current data + 5 analytics) grouped under a logical device.
 
 ### Entity Naming Pattern
 
@@ -95,6 +95,23 @@ All sensors for a fuel type are grouped under a device named:
 - `cheapest_price` - Cheapest price (icon: 💲, unit: AUD/L)
 - `cheapest_brand` - Brand name (icon: ⛽)
 - `cheapest_address` - Station address (icon: 📍)
+
+### Analytics Sensors (Phase 3)
+
+Each fuel type also includes **5 analytics sensors** that provide historical trend analysis:
+
+- **7-Day Average Price** - Rolling 7-day mean price (icon: 📊, unit: AUD/L)
+  - Attributes: `minimum`, `maximum`, `data_points`, `period_days`
+- **30-Day Average Price** - Monthly trend tracking (icon: 📈, unit: AUD/L)
+  - Attributes: `minimum`, `maximum`, `data_points`, `period_days`
+- **Price Trend** - Direction indicator: `increasing`, `decreasing`, or `stable` (icon: 📈/📉/➡️)
+  - Attributes: `price_change`, `percent_change`, `period_days`
+- **Price Volatility** - Standard deviation measure (icon: 📊, unit: AUD/L)
+  - Attributes: `stability` (very_stable/stable/moderate/volatile), `data_points`
+- **Weekly Change %** - Percentage price change over 7 days (icon: %, unit: %)
+  - Attributes: `price_change`, `trend`, `period_days`
+
+**Note**: Analytics sensors require historical data from Home Assistant Recorder. They update hourly and need at least 2 days of data to function.
 
 ### Sensor Attributes
 
