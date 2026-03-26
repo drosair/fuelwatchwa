@@ -12,6 +12,9 @@ A Home Assistant custom integration for fetching fuel prices in Western Australi
 - 🎯 Top 3 cheapest stations tracking
 - 📅 Today/tomorrow price forecasting
 - 🔢 Multiple fuel types per location
+- 🎨 Device grouping for clean organization
+- 📈 State class support for long-term analytics
+- 🎯 Contextual icons and proper units
 
 ## Supported Fuel Types
 
@@ -58,19 +61,39 @@ The integration will create multiple sensors per fuel type.
 
 ## Sensors Created
 
-For each configured fuel type, the following sensors are created:
+For each configured fuel type, the integration creates **8 sensors** grouped under a logical device.
+
+### Entity Naming Pattern
+
+```
+sensor.{location}_{fuel_type}_{sensor_name}
+```
+
+**Examples:**
+- `sensor.perth_diesel_minimum_price`
+- `sensor.caversham_premium_98_cheapest_brand`
+- `sensor.south_perth_ulp_91_station_count`
+
+### Device Grouping
+
+All sensors for a fuel type are grouped under a device named:
+```
+{Location} {Fuel Type}
+```
+
+**Example:** "Caversham Diesel" device contains all 8 diesel sensors.
 
 ### Summary Statistics
-- `sensor.fuelwatch_{fuel_type}_min_price` - Lowest price in area
-- `sensor.fuelwatch_{fuel_type}_avg_price` - Average price
-- `sensor.fuelwatch_{fuel_type}_max_price` - Highest price
-- `sensor.fuelwatch_{fuel_type}_price_spread` - Difference between min and max
-- `sensor.fuelwatch_{fuel_type}_station_count` - Number of stations reporting
+- `minimum_price` - Lowest price in area (icon: ⬇️, unit: AUD/L)
+- `average_price` - Average price (icon: 📈, unit: AUD/L)
+- `maximum_price` - Highest price (icon: ⬆️, unit: AUD/L)
+- `price_spread` - Difference between min and max (icon: Δ, unit: AUD/L)
+- `station_count` - Number of stations reporting (icon: ⛽, unit: stations)
 
 ### Cheapest Station
-- `sensor.fuelwatch_{fuel_type}_cheapest_price` - Cheapest price
-- `sensor.fuelwatch_{fuel_type}_cheapest_brand` - Brand name
-- `sensor.fuelwatch_{fuel_type}_cheapest_address` - Station address
+- `cheapest_price` - Cheapest price (icon: 💲, unit: AUD/L)
+- `cheapest_brand` - Brand name (icon: ⛽)
+- `cheapest_address` - Station address (icon: 📍)
 
 ### Sensor Attributes
 
@@ -87,15 +110,25 @@ To track fuel price trends over time:
 
 ### Using Home Assistant Recorder
 
-The default SQLite recorder will automatically track all sensor states. Configure retention in `configuration.yaml`:
+All price sensors have `state_class: measurement` for automatic long-term statistics. The default SQLite recorder will track sensor states. Configure retention in `configuration.yaml`:
 
 ```yaml
 recorder:
   purge_keep_days: 90
   include:
     entity_globs:
-      - sensor.fuelwatch_*
+      - sensor.*_diesel_*
+      - sensor.*_premium_98_*
+      - sensor.*_ulp_91_*
 ```
+
+### Energy Dashboard & Statistics
+
+Price sensors use `device_class: monetary` and are compatible with:
+- Long-term statistics (automatic with Recorder)
+- InfluxDB integration
+- History graphs
+- Statistics cards
 
 ### Using InfluxDB
 

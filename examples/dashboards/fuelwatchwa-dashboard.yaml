@@ -1,5 +1,12 @@
 # FuelWatch WA - Example Dashboard
 # Add this to your Lovelace dashboard via the UI or include in your dashboard YAML
+#
+# NOTE: Entity IDs include your configured location.
+# Replace 'perth' in the examples below with your actual location (lowercase, underscores for spaces).
+# Example: 'Caversham' becomes 'caversham', 'South Perth' becomes 'south_perth'
+#
+# Entity naming pattern: sensor.{location}_{fuel_type}_{sensor_name}
+# Example: sensor.caversham_diesel_minimum_price
 
 # Dashboard configuration (if using YAML mode)
 title: Fuel Prices
@@ -15,32 +22,19 @@ cards:
           ## 🚛 Diesel Prices
       - type: entities
         entities:
-          - entity: sensor.fuelwatch_diesel_min_price
-            name: Cheapest Price
-            icon: mdi:currency-usd
-          - entity: sensor.fuelwatch_diesel_avg_price
-            name: Average Price
-            icon: mdi:chart-line
-          - entity: sensor.fuelwatch_diesel_max_price
-            name: Highest Price
-            icon: mdi:arrow-up
-          - entity: sensor.fuelwatch_diesel_price_spread
-            name: Price Spread
-            icon: mdi:delta
-          - entity: sensor.fuelwatch_diesel_station_count
-            name: Stations Reporting
-            icon: mdi:counter
+          - entity: sensor.perth_diesel_minimum_price
+          - entity: sensor.perth_diesel_average_price
+          - entity: sensor.perth_diesel_maximum_price
+          - entity: sensor.perth_diesel_price_spread
+          - entity: sensor.perth_diesel_station_count
         show_header_toggle: false
 
       - type: glance
         title: Cheapest Diesel Station
         entities:
-          - entity: sensor.fuelwatch_diesel_cheapest_price
-            name: Price
-          - entity: sensor.fuelwatch_diesel_cheapest_brand
-            name: Brand
-          - entity: sensor.fuelwatch_diesel_cheapest_address
-            name: Address
+          - entity: sensor.perth_diesel_cheapest_price
+          - entity: sensor.perth_diesel_cheapest_brand
+          - entity: sensor.perth_diesel_cheapest_address
 
   # Premium Summary Card
   - type: vertical-stack
@@ -50,43 +44,30 @@ cards:
           ## ⛽ Premium 98 Prices
       - type: entities
         entities:
-          - entity: sensor.fuelwatch_premium_98_min_price
-            name: Cheapest Price
-            icon: mdi:currency-usd
-          - entity: sensor.fuelwatch_premium_98_avg_price
-            name: Average Price
-            icon: mdi:chart-line
-          - entity: sensor.fuelwatch_premium_98_max_price
-            name: Highest Price
-            icon: mdi:arrow-up
-          - entity: sensor.fuelwatch_premium_98_price_spread
-            name: Price Spread
-            icon: mdi:delta
-          - entity: sensor.fuelwatch_premium_98_station_count
-            name: Stations Reporting
-            icon: mdi:counter
+          - entity: sensor.perth_premium_98_minimum_price
+          - entity: sensor.perth_premium_98_average_price
+          - entity: sensor.perth_premium_98_maximum_price
+          - entity: sensor.perth_premium_98_price_spread
+          - entity: sensor.perth_premium_98_station_count
         show_header_toggle: false
 
       - type: glance
         title: Cheapest Premium 98 Station
         entities:
-          - entity: sensor.fuelwatch_premium_98_cheapest_price
-            name: Price
-          - entity: sensor.fuelwatch_premium_98_cheapest_brand
-            name: Brand
-          - entity: sensor.fuelwatch_premium_98_cheapest_address
-            name: Address
+          - entity: sensor.perth_premium_98_cheapest_price
+          - entity: sensor.perth_premium_98_cheapest_brand
+          - entity: sensor.perth_premium_98_cheapest_address
 
   # Price History Graph - Diesel
   - type: history-graph
     title: Diesel Price Trend (7 Days)
     hours_to_show: 168
     entities:
-      - entity: sensor.fuelwatch_diesel_min_price
+      - entity: sensor.perth_diesel_minimum_price
         name: Minimum
-      - entity: sensor.fuelwatch_diesel_avg_price
+      - entity: sensor.perth_diesel_average_price
         name: Average
-      - entity: sensor.fuelwatch_diesel_max_price
+      - entity: sensor.perth_diesel_maximum_price
         name: Maximum
 
   # Price History Graph - Premium 98
@@ -94,18 +75,18 @@ cards:
     title: Premium 98 Price Trend (7 Days)
     hours_to_show: 168
     entities:
-      - entity: sensor.fuelwatch_premium_98_min_price
+      - entity: sensor.perth_premium_98_minimum_price
         name: Minimum
-      - entity: sensor.fuelwatch_premium_98_avg_price
+      - entity: sensor.perth_premium_98_average_price
         name: Average
-      - entity: sensor.fuelwatch_premium_98_max_price
+      - entity: sensor.perth_premium_98_maximum_price
         name: Maximum
 
   # Top 3 Cheapest Stations Details - Diesel
   - type: markdown
     title: 🏆 Top 3 Cheapest Diesel Stations
     content: |
-      {% set top_3 = state_attr('sensor.fuelwatch_diesel_min_price', 'top_3') %}
+      {% set top_3 = state_attr('sensor.perth_diesel_minimum_price', 'top_3') %}
       {% if top_3 %}
       {% for station in top_3 %}
       ### {{ loop.index }}. {{ station.brand }}
@@ -122,7 +103,7 @@ cards:
   - type: markdown
     title: 🏆 Top 3 Cheapest Premium 98 Stations
     content: |
-      {% set top_3 = state_attr('sensor.fuelwatch_premium_98_min_price', 'top_3') %}
+      {% set top_3 = state_attr('sensor.perth_premium_98_minimum_price', 'top_3') %}
       {% if top_3 %}
       {% for station in top_3 %}
       ### {{ loop.index }}. {{ station.brand }}
@@ -138,15 +119,15 @@ cards:
   # Data Freshness
   - type: markdown
     content: |
-      **Last Updated:** {{ state_attr('sensor.fuelwatch_diesel_min_price', 'fetched_at') }}  
-      **Location:** {{ state_attr('sensor.fuelwatch_diesel_min_price', 'location') }}  
-      **Day:** {{ state_attr('sensor.fuelwatch_diesel_min_price', 'day') }}
+      **Last Updated:** {{ state_attr('sensor.perth_diesel_minimum_price', 'fetched_at') }}  
+      **Location:** {{ state_attr('sensor.perth_diesel_minimum_price', 'location') }}  
+      **Day:** {{ state_attr('sensor.perth_diesel_minimum_price', 'day') }}
 
 # Alternative: Individual Cards (paste into UI dashboard editor)
 
 # For a single fuel type comparison gauge:
 # - type: gauge
-#   entity: sensor.fuelwatch_diesel_min_price
+#   entity: sensor.perth_diesel_minimum_price
 #   name: Cheapest Diesel
 #   min: 100
 #   max: 250
@@ -159,16 +140,27 @@ cards:
 # - type: glance
 #   title: Fuel Prices Today
 #   entities:
-#     - sensor.fuelwatch_diesel_min_price
-#     - sensor.fuelwatch_premium_98_min_price
-#     - sensor.fuelwatch_ulp_91_min_price
+#     - sensor.perth_diesel_minimum_price
+#     - sensor.perth_premium_98_minimum_price
+#     - sensor.perth_ulp_91_minimum_price
 
 # For a detailed entity card with attributes:
 # - type: entities
 #   title: Diesel Details
 #   entities:
-#     - sensor.fuelwatch_diesel_min_price
+#     - sensor.perth_diesel_minimum_price
 #     - type: attribute
-#       entity: sensor.fuelwatch_diesel_min_price
+#       entity: sensor.perth_diesel_minimum_price
 #       attribute: top_3
 #       name: Top 3 Stations
+
+# Using Auto-entities (requires custom card from HACS):
+# - type: custom:auto-entities
+#   card:
+#     type: entities
+#     title: All Diesel Sensors
+#   filter:
+#     include:
+#       - entity_id: sensor.*_diesel_*
+#         options:
+#           secondary_info: last-changed
