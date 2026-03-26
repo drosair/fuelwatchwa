@@ -1,1 +1,12 @@
-{\n  "codeowners": ["@drosair"],\n  "documentation_url": "https://github.com/drosair/fuelwatchwa"\n}
+{
+    "domain": "fuelwatchwa",
+    "name": "FuelWatch WA",
+    "documentation": "https://github.com/drosair/fuelwatchwa",
+    "integration_type": "service",
+    "config_flow": true,
+    "dependencies": [],
+    "codeowners": ["@drosair"],
+    "requirements": ["fuelwatcher==0.2.2"],
+    "iot_class": "cloud_polling",
+    "version": "0.1.0"
+}
