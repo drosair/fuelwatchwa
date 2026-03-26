@@ -10,6 +10,8 @@ pip install fuelwatcher
 
 ## Download Historical Data
 
+### Option 1: Single Location (Individual Downloads)
+
 Use the `download_historical.py` script to download historical data from FuelWatch:
 
 ```bash
@@ -29,9 +31,50 @@ python scripts/download_historical.py \
 - `--end-date`: End date in YYYY-MM-DD format
 - `--output`: (Optional) Output CSV file path
 
+### Option 2: Bulk Download (Multiple Locations)
+
+Download historical data for **multiple locations** at once:
+
+```bash
+# Download all default WA locations with all fuel types
+python scripts/bulk_download.py \
+  --all-locations \
+  --all-fuel-types \
+  --start-date 2023-01-01 \
+  --end-date 2024-12-31 \
+  --output-dir /config/historical_data
+
+# Download specific locations and fuel types
+python scripts/bulk_download.py \
+  --locations Perth,Fremantle,Joondalup \
+  --fuel-types diesel,premium_98 \
+  --start-date 2023-01-01 \
+  --end-date 2024-12-31
+
+# Use a config file for complex setups
+python scripts/bulk_download.py \
+  --config scripts/locations_example.yaml \
+  --start-date 2023-01-01 \
+  --end-date 2024-12-31
+```
+
+**Features:**
+- Rate limiting (2 second delay between downloads by default)
+- Progress logging for each location/fuel type
+- Creates separate CSV files for each combination
+- Continues on error (won't stop entire batch if one fails)
+
+**Parameters:**
+- `--all-locations`: Download for 14 default WA suburbs
+- `--all-fuel-types`: Download all 7 fuel types
+- `--locations`: Comma-separated list of specific locations
+- `--fuel-types`: Comma-separated list of specific fuel types
+- `--config`: YAML config file (see `scripts/locations_example.yaml`)
+- `--delay`: Seconds between downloads (default: 2)
+
 ### CSV Format
 
-The script generates a CSV file with the following columns:
+The scripts generate CSV files with the following columns:
 
 ```csv
 date,location,fuel_type,min_price,avg_price,max_price,cheapest_price,station_count
