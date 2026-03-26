@@ -94,6 +94,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Analytics sensors update every hour
 - Works with existing recorder configuration
 
+## [0.5.0] - 2026-03-26
+
+### Added - Phase 4 Historical Data Import
+- **Historical data download script** (`scripts/download_historical.py`)
+- **HA Service**: `fuelwatchwa.import_historical_data` for CSV import
+- **Statistics backfill** - Direct import into Recorder database
+- **Complete documentation** in `scripts/README.md`
+
+### Features
+- Download historical FuelWatch data from any date range
+- CLI tool with progress logging
+- Import CSV files via HA service
+- Automatic statistics metadata creation
+- Supports bulk historical backfill (years of data)
+
+### Technical
+- `services.py` - Service implementation
+- `services.yaml` - Service definition
+- CSV parser with validation
+- Direct Recorder database integration
+- Handles duplicate timestamps gracefully
+
+### Usage
+1. Download: `python scripts/download_historical.py`
+2. Import: Service call via Developer Tools
+3. Analytics sensors automatically use imported data
+
+### Bug Fixes
+- Fixed analytics sensor Recorder state check
+
 ## [Unreleased]
 
 ### Planned
