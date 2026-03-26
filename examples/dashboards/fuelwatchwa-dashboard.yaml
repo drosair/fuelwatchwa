@@ -1,0 +1,174 @@
+# FuelWatch WA - Example Dashboard
+# Add this to your Lovelace dashboard via the UI or include in your dashboard YAML
+
+# Dashboard configuration (if using YAML mode)
+title: Fuel Prices
+path: fuel-prices
+icon: mdi:gas-station
+badges: []
+cards:
+  # Diesel Summary Card
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: |
+          ## 🚛 Diesel Prices
+      - type: entities
+        entities:
+          - entity: sensor.fuelwatch_diesel_min_price
+            name: Cheapest Price
+            icon: mdi:currency-usd
+          - entity: sensor.fuelwatch_diesel_avg_price
+            name: Average Price
+            icon: mdi:chart-line
+          - entity: sensor.fuelwatch_diesel_max_price
+            name: Highest Price
+            icon: mdi:arrow-up
+          - entity: sensor.fuelwatch_diesel_price_spread
+            name: Price Spread
+            icon: mdi:delta
+          - entity: sensor.fuelwatch_diesel_station_count
+            name: Stations Reporting
+            icon: mdi:counter
+        show_header_toggle: false
+
+      - type: glance
+        title: Cheapest Diesel Station
+        entities:
+          - entity: sensor.fuelwatch_diesel_cheapest_price
+            name: Price
+          - entity: sensor.fuelwatch_diesel_cheapest_brand
+            name: Brand
+          - entity: sensor.fuelwatch_diesel_cheapest_address
+            name: Address
+
+  # Premium Summary Card
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: |
+          ## ⛽ Premium 98 Prices
+      - type: entities
+        entities:
+          - entity: sensor.fuelwatch_premium_98_min_price
+            name: Cheapest Price
+            icon: mdi:currency-usd
+          - entity: sensor.fuelwatch_premium_98_avg_price
+            name: Average Price
+            icon: mdi:chart-line
+          - entity: sensor.fuelwatch_premium_98_max_price
+            name: Highest Price
+            icon: mdi:arrow-up
+          - entity: sensor.fuelwatch_premium_98_price_spread
+            name: Price Spread
+            icon: mdi:delta
+          - entity: sensor.fuelwatch_premium_98_station_count
+            name: Stations Reporting
+            icon: mdi:counter
+        show_header_toggle: false
+
+      - type: glance
+        title: Cheapest Premium 98 Station
+        entities:
+          - entity: sensor.fuelwatch_premium_98_cheapest_price
+            name: Price
+          - entity: sensor.fuelwatch_premium_98_cheapest_brand
+            name: Brand
+          - entity: sensor.fuelwatch_premium_98_cheapest_address
+            name: Address
+
+  # Price History Graph - Diesel
+  - type: history-graph
+    title: Diesel Price Trend (7 Days)
+    hours_to_show: 168
+    entities:
+      - entity: sensor.fuelwatch_diesel_min_price
+        name: Minimum
+      - entity: sensor.fuelwatch_diesel_avg_price
+        name: Average
+      - entity: sensor.fuelwatch_diesel_max_price
+        name: Maximum
+
+  # Price History Graph - Premium 98
+  - type: history-graph
+    title: Premium 98 Price Trend (7 Days)
+    hours_to_show: 168
+    entities:
+      - entity: sensor.fuelwatch_premium_98_min_price
+        name: Minimum
+      - entity: sensor.fuelwatch_premium_98_avg_price
+        name: Average
+      - entity: sensor.fuelwatch_premium_98_max_price
+        name: Maximum
+
+  # Top 3 Cheapest Stations Details - Diesel
+  - type: markdown
+    title: 🏆 Top 3 Cheapest Diesel Stations
+    content: |
+      {% set top_3 = state_attr('sensor.fuelwatch_diesel_min_price', 'top_3') %}
+      {% if top_3 %}
+      {% for station in top_3 %}
+      ### {{ loop.index }}. {{ station.brand }}
+      **Price:** ${{ station.price }}  
+      **Address:** {{ station.address }}  
+      **Location:** {{ station.location }}
+      
+      {% endfor %}
+      {% else %}
+      *No data available*
+      {% endif %}
+
+  # Top 3 Cheapest Stations Details - Premium 98
+  - type: markdown
+    title: 🏆 Top 3 Cheapest Premium 98 Stations
+    content: |
+      {% set top_3 = state_attr('sensor.fuelwatch_premium_98_min_price', 'top_3') %}
+      {% if top_3 %}
+      {% for station in top_3 %}
+      ### {{ loop.index }}. {{ station.brand }}
+      **Price:** ${{ station.price }}  
+      **Address:** {{ station.address }}  
+      **Location:** {{ station.location }}
+      
+      {% endfor %}
+      {% else %}
+      *No data available*
+      {% endif %}
+
+  # Data Freshness
+  - type: markdown
+    content: |
+      **Last Updated:** {{ state_attr('sensor.fuelwatch_diesel_min_price', 'fetched_at') }}  
+      **Location:** {{ state_attr('sensor.fuelwatch_diesel_min_price', 'location') }}  
+      **Day:** {{ state_attr('sensor.fuelwatch_diesel_min_price', 'day') }}
+
+# Alternative: Individual Cards (paste into UI dashboard editor)
+
+# For a single fuel type comparison gauge:
+# - type: gauge
+#   entity: sensor.fuelwatch_diesel_min_price
+#   name: Cheapest Diesel
+#   min: 100
+#   max: 250
+#   severity:
+#     green: 100
+#     yellow: 180
+#     red: 220
+
+# For a simple glance card:
+# - type: glance
+#   title: Fuel Prices Today
+#   entities:
+#     - sensor.fuelwatch_diesel_min_price
+#     - sensor.fuelwatch_premium_98_min_price
+#     - sensor.fuelwatch_ulp_91_min_price
+
+# For a detailed entity card with attributes:
+# - type: entities
+#   title: Diesel Details
+#   entities:
+#     - sensor.fuelwatch_diesel_min_price
+#     - type: attribute
+#       entity: sensor.fuelwatch_diesel_min_price
+#       attribute: top_3
+#       name: Top 3 Stations
