@@ -5,15 +5,18 @@ from typing import Any
 
 from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers import selector
 import voluptuous as vol
 
 from .const import (
+    COMMON_SUBURBS,
     CONF_DAY,
     CONF_FUEL_TYPES,
     CONF_LOCATION,
     DAY_OPTIONS,
     DEFAULT_DAY,
     DOMAIN,
+    FUEL_TYPE_NAMES,
     FUEL_TYPE_OPTIONS,
 )
 
@@ -27,17 +30,13 @@ class FuelWatchConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            location = user_input[CONF_LOCATION].strip()
-            raw_fuel_types = user_input[CONF_FUEL_TYPES]
-
-            fuel_types = [item.strip() for item in raw_fuel_types.split(",") if item.strip()]
+            location = user_input[CONF_LOCATION]
+            fuel_types = user_input[CONF_FUEL_TYPES]
 
             if not location:
                 errors[CONF_LOCATION] = "required"
             elif not fuel_types:
                 errors[CONF_FUEL_TYPES] = "required"
-            elif any(item not in FUEL_TYPE_OPTIONS for item in fuel_types):
-                errors[CONF_FUEL_TYPES] = "invalid_selection"
             else:
                 await self.async_set_unique_id(f"{location.lower()}_{user_input[CONF_DAY]}")
                 self._abort_if_unique_id_configured()
@@ -52,9 +51,29 @@ class FuelWatchConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         schema = vol.Schema(
             {
-                vol.Required(CONF_LOCATION): str,
-                vol.Required(CONF_FUEL_TYPES, default="diesel"): str,
-                vol.Required(CONF_DAY, default=DEFAULT_DAY): vol.In(DAY_OPTIONS),
+                vol.Required(CONF_LOCATION): selector.SelectSelector(
+                    selector.SelectSelectorConfig(
+                        options=COMMON_SUBURBS,
+                        mode=selector.SelectSelectorMode.DROPDOWN,
+                        custom_value=True,
+                    ),
+                ),
+                vol.Required(CONF_FUEL_TYPES, default=["diesel"]): selector.SelectSelector(
+                    selector.SelectSelectorConfig(
+                        options=[
+                            selector.SelectOptionDict(value=k, label=v)
+                            for k, v in FUEL_TYPE_NAMES.items()
+                        ],
+                        multiple=True,
+                        mode=selector.SelectSelectorMode.DROPDOWN,
+                    ),
+                ),
+                vol.Required(CONF_DAY, default=DEFAULT_DAY): selector.SelectSelector(
+                    selector.SelectSelectorConfig(
+                        options=DAY_OPTIONS,
+                        mode=selector.SelectSelectorMode.DROPDOWN,
+                    ),
+                ),
             }
         )
 
