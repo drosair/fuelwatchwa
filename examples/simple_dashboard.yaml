@@ -1,0 +1,30 @@
+views:
+  - title: FuelWatch
+    path: fuelwatch
+    icon: mdi:gas-station
+    badges:
+      - sensor.caversham_diesel_minimum_price
+      - sensor.caversham_diesel_7_day_average
+    cards:
+      - type: entities
+        title: Current Prices
+        entities:
+          - sensor.caversham_diesel_minimum_price
+          - sensor.caversham_diesel_average_price
+          - sensor.caversham_diesel_maximum_price
+          - sensor.caversham_diesel_cheapest_station
+          - sensor.caversham_diesel_station_count
+      - type: entities
+        title: Analytics
+        entities:
+          - sensor.caversham_diesel_7_day_average
+          - sensor.caversham_diesel_30_day_average
+          - sensor.caversham_diesel_price_trend
+          - sensor.caversham_diesel_weekly_change
+          - sensor.caversham_diesel_volatility
+      - type: history-graph
+        title: 7-Day Price History
+        hours_to_show: 168
+        entities:
+          - sensor.caversham_diesel_minimum_price
+          - sensor.caversham_diesel_7_day_average
