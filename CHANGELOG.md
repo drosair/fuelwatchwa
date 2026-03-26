@@ -51,6 +51,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Historical graphing support with state_class
 - Documentation with device grouping examples
 
+## [0.3.0] - 2026-03-26
+
+### Added
+- Automatic fetching of both today's and tomorrow's prices
+- Tomorrow's price summary in sensor attributes (available after 2:30pm)
+- Price change calculation (tomorrow vs today)
+- Suburb dropdown selector with 40+ common WA suburbs
+- Fuel type multi-select dropdown with friendly names
+- Custom suburb entry support
+
+### Changed
+- Removed 'day' selector from config flow (now fetches both automatically)
+- Simplified configuration flow with better UX
+- Tomorrow data gracefully handled when not yet available
+
+### Breaking Changes
+- Config flow changed - existing integrations need reconfiguration
+- 'day' field removed from config (migration required for existing setups)
+
 ## [Unreleased]
 
 ### Planned

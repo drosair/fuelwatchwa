@@ -53,11 +53,12 @@ Once published to HACS:
 
 During setup, you'll be asked to provide:
 
-- **Location**: Suburb or location name (e.g., "Perth", "Fremantle")
-- **Fuel Types**: Comma-separated list of fuel types (e.g., `diesel,premium_98,ulp_91`)
-- **Day**: `today` or `tomorrow`
+- **Suburb**: Select from dropdown or enter custom location (e.g., "Perth", "Fremantle")
+- **Fuel Types**: Multi-select dropdown with friendly names (e.g., Diesel, Premium 98)
 
-The integration will create multiple sensors per fuel type.
+The integration automatically fetches **both today's and tomorrow's prices** in each update.
+
+**Note**: Today's prices are available 24/7. Tomorrow's prices are available after 2:30pm daily.
 
 ## Sensors Created
 
@@ -100,9 +101,13 @@ All sensors for a fuel type are grouped under a device named:
 All sensors include these attributes:
 - `location` - Configured location
 - `fuel_type` - Fuel type key
-- `day` - Today or tomorrow
-- `top_3` - List of 3 cheapest stations with brand, price, address, location
+- `top_3` - List of 3 cheapest stations for today
 - `fetched_at` - ISO timestamp of last fetch
+- `tomorrow` - Complete price summary for tomorrow (available after 2:30pm):
+  - `min_price`, `max_price`, `avg_price`, `price_spread`
+  - `cheapest_price`, `cheapest_brand`, `cheapest_address`
+  - `station_count`
+- `price_change` - Price difference (tomorrow vs today cheapest price)
 
 ## Historical Data
 
