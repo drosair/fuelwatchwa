@@ -1,0 +1,13 @@
+{
+  "domain": "fuelwatchwa",
+  "name": "FuelWatch WA",
+  "documentation": "https://github.com/drosair/fuelwatchwa",
+  "issue_tracker": "https://github.com/drosair/fuelwatchwa/issues",
+  "integration_type": "hub",
+  "config_flow": true,
+  "dependencies": [],
+  "codeowners": ["@drosair"],
+  "requirements": ["fuelwatcher==0.2.2"],
+  "iot_class": "cloud_polling",
+  "version": "0.2.0-alpha1"
+}
