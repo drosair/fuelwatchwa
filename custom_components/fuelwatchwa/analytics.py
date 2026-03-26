@@ -25,11 +25,6 @@ async def get_price_statistics(
         Dictionary with mean, min, max, change, trend, volatility
         None if insufficient data
     """
-    if not await get_instance(hass).async_add_executor_job(
-        lambda: get_instance(hass).states
-    ):
-        return None
-
     end_time = dt_util.now()
     start_time = end_time - timedelta(days=days)
 

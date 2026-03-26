@@ -128,7 +128,38 @@ All sensors include these attributes:
 
 ## Historical Data
 
-To track fuel price trends over time:
+### Phase 4 - CSV Import & Backfill
+
+Import years of historical FuelWatch data to power your analytics sensors!
+
+**1. Download Historical Data**
+
+```bash
+python scripts/download_historical.py \
+  --location Perth \
+  --fuel-type diesel \
+  --start-date 2023-01-01 \
+  --end-date 2024-12-31 \
+  --output /config/historical_data/perth_diesel.csv
+```
+
+**2. Import into Home Assistant**
+
+Use the Developer Tools → Services:
+
+```yaml
+service: fuelwatchwa.import_historical_data
+data:
+  csv_path: /config/historical_data/perth_diesel.csv
+  entity_id: sensor.perth_diesel_minimum_price
+  source: FuelWatch Historical
+```
+
+**Benefits:**
+- Import data from 2001 onwards (if available)
+- Powers analytics sensors with long-term trends
+- One-time import, persistent in Recorder database
+- See complete documentation in `scripts/README.md`
 
 ### Using Home Assistant Recorder
 

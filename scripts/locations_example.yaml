@@ -1,0 +1,21 @@
+# Example configuration for bulk downloading historical data
+# Usage: python scripts/bulk_download.py --config scripts/locations_example.yaml --start-date 2023-01-01 --end-date 2024-12-31
+
+locations:
+  - Perth
+  - Fremantle
+  - Joondalup
+  - Rockingham
+  - Mandurah
+  - Armadale
+  - Midland
+  - Cannington
+  - Morley
+  - Booragoon
+  - Canning Vale
+  - Caversham
+
+fuel_types:
+  - diesel
+  - premium_98
+  - ulp_91
