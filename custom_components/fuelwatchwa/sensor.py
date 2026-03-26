@@ -98,21 +98,21 @@ class FuelNumericSensor(BaseFuelSensor):
                 "name": "Minimum Price",
                 "icon": "mdi:arrow-down-bold",
                 "unit": "AUD/L",
-                "device_class": SensorDeviceClass.MONETARY,
+                "device_class": None,
                 "state_class": SensorStateClass.MEASUREMENT,
             },
             "avg_price": {
                 "name": "Average Price",
                 "icon": "mdi:chart-line",
                 "unit": "AUD/L",
-                "device_class": SensorDeviceClass.MONETARY,
+                "device_class": None,
                 "state_class": SensorStateClass.MEASUREMENT,
             },
             "max_price": {
                 "name": "Maximum Price",
                 "icon": "mdi:arrow-up-bold",
                 "unit": "AUD/L",
-                "device_class": SensorDeviceClass.MONETARY,
+                "device_class": None,
                 "state_class": SensorStateClass.MEASUREMENT,
             },
             "price_spread": {
@@ -161,7 +161,7 @@ class FuelCheapestSensor(BaseFuelSensor):
                 "name": "Cheapest Price",
                 "icon": "mdi:currency-usd",
                 "unit": "AUD/L",
-                "device_class": SensorDeviceClass.MONETARY,
+                "device_class": None,
             },
             "brand": {
                 "name": "Cheapest Brand",
