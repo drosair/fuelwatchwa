@@ -15,13 +15,13 @@ class FuelWatchAPI:
 
     def __init__(self, hass: HomeAssistant) -> None:
         self.hass = hass
-        self.client = FuelWatch()
 
     def _fetch_sync(self, location: str, fuel_type: str, day: str):
         """Run the blocking FuelWatch request synchronously."""
         product_id = FUEL_TYPE_OPTIONS[fuel_type]
-        self.client.query(suburb=location, product=product_id, day=day)
-        return self.client.get_xml
+        client = FuelWatch()
+        client.query(suburb=location, product=product_id, day=day)
+        return client.get_xml
 
     async def fetch(self, location: str, fuel_type: str, day: str) -> dict | None:
         """Fetch FuelWatch data and return summary statistics."""
