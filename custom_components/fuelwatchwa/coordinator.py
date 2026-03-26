@@ -14,22 +14,21 @@ _LOGGER = logging.getLogger(__name__)
 class FuelWatchCoordinator(DataUpdateCoordinator):
     """Coordinate FuelWatch API calls for one location/fuel/day combination."""
 
-    def __init__(self, hass, location: str, fuel_type: str, day: str) -> None:
+    def __init__(self, hass, location: str, fuel_type: str) -> None:
         super().__init__(
             hass,
             _LOGGER,
-            name=f"{DOMAIN}_{location}_{fuel_type}_{day}",
+            name=f"{DOMAIN}_{location}_{fuel_type}",
             update_interval=DEFAULT_SCAN_INTERVAL,
         )
         self.api = FuelWatchAPI(hass)
         self.location = location
         self.fuel_type = fuel_type
-        self.day = day
 
     async def _async_update_data(self):
-        data = await self.api.fetch(self.location, self.fuel_type, self.day)
+        data = await self.api.fetch(self.location, self.fuel_type)
         if data is None:
             raise UpdateFailed(
-                f"No FuelWatch data returned for {self.location} / {self.fuel_type} / {self.day}"
+                f"No FuelWatch data returned for {self.location} / {self.fuel_type}"
             )
         return data

@@ -76,13 +76,20 @@ class BaseFuelSensor(SensorEntity):
         if not self.coordinator.data:
             return None
 
-        return {
+        attrs = {
             "location": self.coordinator.data.get("location"),
             "fuel_type": self.coordinator.data.get("fuel_type"),
-            "day": self.coordinator.data.get("day"),
             "top_3": self.coordinator.data.get("top_3"),
             "fetched_at": self.coordinator.data.get("fetched_at"),
         }
+        
+        # Add tomorrow's data if available (after 2:30pm)
+        tomorrow = self.coordinator.data.get("tomorrow")
+        if tomorrow:
+            attrs["tomorrow"] = tomorrow
+            attrs["price_change"] = self.coordinator.data.get("price_change")
+        
+        return attrs
 
 
 class FuelNumericSensor(BaseFuelSensor):

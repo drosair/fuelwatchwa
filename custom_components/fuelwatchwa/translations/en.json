@@ -2,18 +2,21 @@
   "config": {
     "step": {
       "user": {
-        "title": "FuelWatch WA",
-        "description": "Configure your location and fuel types",
+        "title": "FuelWatch WA Setup",
+        "description": "Configure FuelWatch integration for Western Australia",
         "data": {
-          "location": "Suburb or location",
-          "fuel_types": "Fuel types",
-          "day": "Day"
+          "location": "Suburb",
+          "fuel_types": "Fuel Types"
+        },
+        "data_description": {
+          "location": "Select your suburb or enter a custom location",
+          "fuel_types": "Select one or more fuel types to monitor (both today and tomorrow prices will be fetched automatically)"
         }
       }
     },
     "error": {
       "required": "This field is required",
-      "invalid_selection": "Invalid selection"
+      "invalid_selection": "Invalid fuel type selection"
     }
   }
 }

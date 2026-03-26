@@ -23,20 +23,24 @@ class FuelWatchAPI:
         client.query(suburb=location, product=product_id, day=day)
         return client.get_xml
 
-    async def fetch(self, location: str, fuel_type: str, day: str) -> dict | None:
-        """Fetch FuelWatch data and return summary statistics."""
+    async def fetch(self, location: str, fuel_type: str) -> dict | None:
+        """Fetch FuelWatch data for both today and tomorrow, return summary statistics."""
+        # Fetch both today and tomorrow data
         try:
-            data = await self.hass.async_add_executor_job(
-                self._fetch_sync, location, fuel_type, day
+            today_data = await self.hass.async_add_executor_job(
+                self._fetch_sync, location, fuel_type, "today"
+            )
+            tomorrow_data = await self.hass.async_add_executor_job(
+                self._fetch_sync, location, fuel_type, "tomorrow"
             )
         except Exception:
             return None
 
-        if not data:
+        if not today_data:
             return None
 
         prices = []
-        for row in data:
+        for row in today_data:
             try:
                 if row.get("price") is not None:
                     prices.append(float(row["price"]))
@@ -50,10 +54,10 @@ class FuelWatchAPI:
         max_price = max(prices)
         avg_price = round(mean(prices), 2)
         price_spread = round(max_price - min_price, 2)
-        cheapest = data[0]
+        cheapest = today_data[0]
 
         top_3 = []
-        for row in data[:3]:
+        for row in today_data[:3]:
             try:
                 price = float(row.get("price")) if row.get("price") is not None else None
             except (TypeError, ValueError):
@@ -75,12 +79,54 @@ class FuelWatchAPI:
         except (TypeError, ValueError):
             cheapest_price = None
 
+        # Process tomorrow's data if available
+        tomorrow_summary = None
+        price_change = None
+        if tomorrow_data:
+            tomorrow_prices = []
+            for row in tomorrow_data:
+                try:
+                    if row.get("price") is not None:
+                        tomorrow_prices.append(float(row["price"]))
+                except (TypeError, ValueError):
+                    continue
+
+            if tomorrow_prices:
+                tomorrow_min = min(tomorrow_prices)
+                tomorrow_max = max(tomorrow_prices)
+                tomorrow_avg = round(mean(tomorrow_prices), 2)
+                tomorrow_cheapest = tomorrow_data[0]
+
+                try:
+                    tomorrow_cheapest_price = (
+                        float(tomorrow_cheapest.get("price"))
+                        if tomorrow_cheapest.get("price") is not None
+                        else None
+                    )
+                except (TypeError, ValueError):
+                    tomorrow_cheapest_price = None
+
+                tomorrow_summary = {
+                    "min_price": tomorrow_min,
+                    "max_price": tomorrow_max,
+                    "avg_price": tomorrow_avg,
+                    "price_spread": round(tomorrow_max - tomorrow_min, 2),
+                    "cheapest_price": tomorrow_cheapest_price,
+                    "cheapest_brand": tomorrow_cheapest.get("brand"),
+                    "cheapest_address": tomorrow_cheapest.get("address"),
+                    "station_count": len(tomorrow_data),
+                }
+
+                # Calculate price change
+                if cheapest_price is not None and tomorrow_cheapest_price is not None:
+                    price_change = round(tomorrow_cheapest_price - cheapest_price, 2)
+
         return {
             "location": location,
             "fuel_type": fuel_type,
-            "day": day,
             "fetched_at": datetime.now(UTC).isoformat(),
-            "station_count": len(data),
+            # Today's prices (primary)
+            "station_count": len(today_data),
             "min_price": min_price,
             "max_price": max_price,
             "avg_price": avg_price,
@@ -92,5 +138,8 @@ class FuelWatchAPI:
                 "location": cheapest.get("location"),
             },
             "top_3": top_3,
-            "stations": data,
+            "stations": today_data,
+            # Tomorrow's prices
+            "tomorrow": tomorrow_summary,
+            "price_change": price_change,
         }

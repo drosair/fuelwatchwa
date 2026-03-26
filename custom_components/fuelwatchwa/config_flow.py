@@ -10,11 +10,8 @@ import voluptuous as vol
 
 from .const import (
     COMMON_SUBURBS,
-    CONF_DAY,
     CONF_FUEL_TYPES,
     CONF_LOCATION,
-    DAY_OPTIONS,
-    DEFAULT_DAY,
     DOMAIN,
     FUEL_TYPE_NAMES,
     FUEL_TYPE_OPTIONS,
@@ -38,14 +35,13 @@ class FuelWatchConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             elif not fuel_types:
                 errors[CONF_FUEL_TYPES] = "required"
             else:
-                await self.async_set_unique_id(f"{location.lower()}_{user_input[CONF_DAY]}")
+                await self.async_set_unique_id(location.lower())
                 self._abort_if_unique_id_configured()
                 return self.async_create_entry(
                     title=f"FuelWatch WA ({location})",
                     data={
                         CONF_LOCATION: location,
                         CONF_FUEL_TYPES: fuel_types,
-                        CONF_DAY: user_input[CONF_DAY],
                     },
                 )
 
@@ -65,12 +61,6 @@ class FuelWatchConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             for k, v in FUEL_TYPE_NAMES.items()
                         ],
                         multiple=True,
-                        mode=selector.SelectSelectorMode.DROPDOWN,
-                    ),
-                ),
-                vol.Required(CONF_DAY, default=DEFAULT_DAY): selector.SelectSelector(
-                    selector.SelectSelectorConfig(
-                        options=DAY_OPTIONS,
                         mode=selector.SelectSelectorMode.DROPDOWN,
                     ),
                 ),
