@@ -18,9 +18,11 @@ DAY_OPTIONS = ["today", "tomorrow"]
 FUEL_TYPE_OPTIONS = {
     "ulp_91": 1,
     "premium_95": 2,
-    "premium_98": 4,
-    "diesel": 5,
-    "lpg": 6,
+    "diesel": 4,
+    "lpg": 5,
+    "premium_98": 6,
+    "e85": 10,
+    "brand_diesel": 11,
 }
 
 ATTR_TOP_3 = "top_3"
