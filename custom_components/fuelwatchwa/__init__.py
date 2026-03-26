@@ -5,10 +5,15 @@ from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN, PLATFORMS
 from .coordinator import FuelWatchCoordinator
+from .services import async_setup_services
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
+    
+    # Register services (only once)
+    if not hass.services.has_service(DOMAIN, "import_historical_data"):
+        await async_setup_services(hass)
 
     location = entry.data.get("location")
     fuel_types = entry.data.get("fuel_types", ["ulp_91"])

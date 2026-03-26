@@ -1,0 +1,26 @@
+import_historical_data:
+  name: Import Historical Data
+  description: Import historical fuel price data from CSV file into Home Assistant statistics
+  fields:
+    csv_path:
+      name: CSV File Path
+      description: Full path to the CSV file containing historical data
+      required: true
+      example: "/config/historical_data/perth_diesel.csv"
+      selector:
+        text:
+    entity_id:
+      name: Entity ID
+      description: The sensor entity ID to import data for
+      required: true
+      example: "sensor.perth_diesel_minimum_price"
+      selector:
+        text:
+    source:
+      name: Source
+      description: Source name for the imported statistics
+      required: false
+      default: "FuelWatch Historical"
+      example: "FuelWatch Historical"
+      selector:
+        text:
