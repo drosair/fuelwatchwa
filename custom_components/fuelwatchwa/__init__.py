@@ -15,7 +15,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     day = entry.data.get("day", "today")
 
     coordinators = {}
-
     for fuel_type in fuel_types:
         coordinator = FuelWatchCoordinator(hass, location, fuel_type, day)
         await coordinator.async_config_entry_first_refresh()
