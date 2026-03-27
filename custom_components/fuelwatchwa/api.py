@@ -1,6 +1,7 @@
 """API client helpers for the FuelWatch WA integration."""
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime
 from statistics import mean
 
@@ -8,6 +9,8 @@ from homeassistant.core import HomeAssistant
 from fuelwatcher import FuelWatch
 
 from .const import FUEL_TYPE_OPTIONS
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class FuelWatchAPI:
@@ -83,6 +86,12 @@ class FuelWatchAPI:
         tomorrow_summary = None
         price_change = None
         if tomorrow_data:
+            _LOGGER.debug(
+                "Tomorrow data available for %s %s: %d stations",
+                location,
+                fuel_type,
+                len(tomorrow_data),
+            )
             tomorrow_prices = []
             for row in tomorrow_data:
                 try:
@@ -120,6 +129,12 @@ class FuelWatchAPI:
                 # Calculate price change
                 if cheapest_price is not None and tomorrow_cheapest_price is not None:
                     price_change = round(tomorrow_cheapest_price - cheapest_price, 2)
+        else:
+            _LOGGER.debug(
+                "Tomorrow data not available for %s %s (published after 2:30 PM)",
+                location,
+                fuel_type,
+            )
 
         return {
             "location": location,
