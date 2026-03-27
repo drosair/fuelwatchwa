@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="images/logo.png" alt="FuelWatch WA Logo" width="600">
+</p>
+
 # FuelWatch WA - Home Assistant Integration
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
