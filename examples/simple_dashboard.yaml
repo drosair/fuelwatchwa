@@ -28,3 +28,21 @@ views:
         entities:
           - sensor.caversham_diesel_minimum_price
           - sensor.caversham_diesel_7_day_average
+      - type: markdown
+        title: Tomorrow's Forecast
+        content: |
+          {% set tomorrow = state_attr('sensor.caversham_diesel_minimum_price', 'tomorrow') %}
+          {% if tomorrow %}
+          **Tomorrow's Prices** (available after 2:30 PM):
+          - **Minimum:** {{ tomorrow.min_price }} c/L
+          - **Average:** {{ tomorrow.avg_price }} c/L
+          - **Maximum:** {{ tomorrow.max_price }} c/L
+          - **Cheapest:** {{ tomorrow.cheapest_price }} c/L at {{ tomorrow.cheapest_brand }}
+          - **Price Change:** {{ state_attr('sensor.caversham_diesel_minimum_price', 'price_change') }} c/L
+          {% else %}
+          Tomorrow's prices not yet available.
+          
+          FuelWatch publishes tomorrow's data after **2:30 PM** daily.
+          
+          Current time: {{ now().strftime('%I:%M %p') }}
+          {% endif %}
