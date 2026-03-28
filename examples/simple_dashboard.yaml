@@ -14,14 +14,24 @@ views:
           - sensor.caversham_diesel_maximum_price
           - sensor.caversham_diesel_cheapest_station
           - sensor.caversham_diesel_station_count
-      - type: entities
+      - type: markdown
         title: Analytics
-        entities:
-          - sensor.caversham_diesel_7_day_average
-          - sensor.caversham_diesel_30_day_average
-          - sensor.caversham_diesel_price_trend
-          - sensor.caversham_diesel_weekly_change
-          - sensor.caversham_diesel_volatility
+        content: |
+          {% if states('sensor.caversham_diesel_7_day_average') not in ['unknown', 'unavailable'] %}
+          **7-Day Average:** {{ states('sensor.caversham_diesel_7_day_average') }} c/L  
+          **30-Day Average:** {{ states('sensor.caversham_diesel_30_day_average') }} c/L  
+          **Price Trend:** {{ states('sensor.caversham_diesel_price_trend') }}  
+          **Weekly Change:** {{ states('sensor.caversham_diesel_weekly_change') }}%  
+          **Volatility:** {{ states('sensor.caversham_diesel_volatility') }}
+          {% else %}
+          📊 Analytics sensors require historical data.
+          
+          **To enable analytics:**
+          1. Wait 2-3 days for daily price data to accumulate, OR
+          2. Import historical CSV data via the import service
+          
+          Analytics will automatically appear once sufficient data is available.
+          {% endif %}
       - type: history-graph
         title: 7-Day Price History
         hours_to_show: 168

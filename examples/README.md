@@ -28,6 +28,23 @@ Enhanced dashboard with custom cards for better visualizations.
 - Location comparison charts
 - Interactive map
 
+## Important Notes
+
+### Analytics Sensors
+Analytics sensors (7-day average, 30-day average, price trend, volatility, weekly change) require **historical data** to function:
+
+- **Option 1:** Wait 2-3 days for daily price data to accumulate naturally
+- **Option 2:** Import historical CSV data using the import service (see main README)
+
+The example dashboards handle missing analytics gracefully - they show helpful instructions instead of "Entity not found" errors.
+
+### Multiple Fuel Types
+The example dashboards show a single fuel type (diesel). To add multiple fuel types:
+
+1. Add fuel types via **Settings** → **Devices & Services** → **FuelWatch WA** → **Configure**
+2. Duplicate the fuel sections in the dashboard YAML
+3. Replace `diesel` with your fuel type (e.g., `premium_98`, `ulp_91`)
+
 ## Installation
 
 ### Option 1: Import via UI (Easiest)
